@@ -1,0 +1,877 @@
+{
+  "scope": "54 binary Conv operators vs 48 floating Conv plus 6 corresponding FC/Gemm operators. Excludes separate transforms, Scale, Gather, Hadamard and other auxiliary operators; not an end-to-end figure.",
+  "kernel": "ARM_A55",
+  "threads": [
+    "1"
+  ],
+  "summary": {
+    "fp32_1": {
+      "feature48": {
+        "count": 48,
+        "n": 90,
+        "mean_ms": 683.9756601888889,
+        "round_means_ms": [
+          669.5881082000001,
+          703.8787080666666,
+          678.4601643
+        ]
+      },
+      "stage6": {
+        "count": 6,
+        "n": 90,
+        "mean_ms": 13.052749422222222,
+        "round_means_ms": [
+          12.6868472,
+          13.452026333333334,
+          13.019374733333333
+        ]
+      },
+      "all54": {
+        "count": 54,
+        "n": 90,
+        "mean_ms": 697.0284096111111,
+        "round_means_ms": [
+          682.2749554000001,
+          717.3307344,
+          691.4795390333334
+        ]
+      }
+    },
+    "fp16_1": {
+      "feature48": {
+        "count": 48,
+        "n": 90,
+        "mean_ms": 290.6994177777778,
+        "round_means_ms": [
+          291.2115285,
+          290.09093176666664,
+          290.7957930666667
+        ]
+      },
+      "stage6": {
+        "count": 6,
+        "n": 90,
+        "mean_ms": 6.5194527777777775,
+        "round_means_ms": [
+          6.293882066666667,
+          6.663737066666666,
+          6.6007392000000005
+        ]
+      },
+      "all54": {
+        "count": 54,
+        "n": 90,
+        "mean_ms": 297.21887055555555,
+        "round_means_ms": [
+          297.5054105666666,
+          296.7546688333333,
+          297.39653226666667
+        ]
+      }
+    },
+    "bnn_1": {
+      "feature48": {
+        "count": 48,
+        "n": 90,
+        "mean_ms": 129.93064223333332,
+        "round_means_ms": [
+          129.89369903333332,
+          129.97344536666665,
+          129.9247823
+        ]
+      },
+      "stage6": {
+        "count": 6,
+        "n": 90,
+        "mean_ms": 0.7403532777777778,
+        "round_means_ms": [
+          0.7460169666666666,
+          0.7313831333333334,
+          0.7436597333333334
+        ]
+      },
+      "all54": {
+        "count": 54,
+        "n": 90,
+        "mean_ms": 130.6709955111111,
+        "round_means_ms": [
+          130.639716,
+          130.7048285,
+          130.66844203333332
+        ]
+      }
+    }
+  },
+  "speedups": {
+    "feature48": {
+      "fp32_t1": 5.264159773493501,
+      "fp16_t1": 2.237343037647202
+    },
+    "stage6": {
+      "fp32_t1": 17.630433759138562,
+      "fp16_t1": 8.805867379079311
+    },
+    "all54": {
+      "fp32_t1": 5.3342243769149364,
+      "fp16_t1": 2.2745588597760604
+    }
+  },
+  "details": [
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.0/conv1/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.0/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 3.4065415333333333,
+        "fp16_1": 1.7045855555555556,
+        "bnn_1": 0.7801191777777777
+      },
+      "speedups": {
+        "fp32_t1": 4.366693744200851,
+        "fp16_t1": 2.1850322413700725
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.0/conv2/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.0/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.757259022222222,
+        "fp16_1": 5.350186944444444,
+        "bnn_1": 4.020110055555556
+      },
+      "speedups": {
+        "fp32_t1": 3.1733606408591823,
+        "fp16_t1": 1.3308558398919454
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.0/conv3/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.0/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.448805511111111,
+        "fp16_1": 5.235727977777778,
+        "bnn_1": 2.0956092111111113
+      },
+      "speedups": {
+        "fp32_t1": 5.463234963087822,
+        "fp16_t1": 2.498427641001705
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.1/conv1/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.1/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.341054355555556,
+        "fp16_1": 8.050992833333334,
+        "bnn_1": 2.577854377777778
+      },
+      "speedups": {
+        "fp32_t1": 5.175255231855309,
+        "fp16_t1": 3.12313717281177
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.1/conv2/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.1/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.775609322222222,
+        "fp16_1": 5.378989488888889,
+        "bnn_1": 4.0206451111111114
+      },
+      "speedups": {
+        "fp32_t1": 3.1775023582451083,
+        "fp16_t1": 1.3378423959936114
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.1/conv3/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.1/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.804717044444445,
+        "fp16_1": 5.336774755555555,
+        "bnn_1": 2.1029992111111113
+      },
+      "speedups": {
+        "fp32_t1": 5.613276972275928,
+        "fp16_t1": 2.5376969840782255
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.2/conv1/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.2/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.348306977777778,
+        "fp16_1": 7.603482822222222,
+        "bnn_1": 2.583652411111111
+      },
+      "speedups": {
+        "fp32_t1": 5.166448443441074,
+        "fp16_t1": 2.94292018133829
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.2/conv2/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.2/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.977301822222222,
+        "fp16_1": 5.3577269,
+        "bnn_1": 4.013092566666667
+      },
+      "speedups": {
+        "fp32_t1": 3.2337409632694714,
+        "fp16_t1": 1.3350618783384323
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer1/layer1.2/conv3/Conv",
+      "float_op": "/feature_extractor/layer1/layer1.2/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.957398844444445,
+        "fp16_1": 5.441654788888889,
+        "bnn_1": 2.0901377555555554
+      },
+      "speedups": {
+        "fp32_t1": 5.720866393931144,
+        "fp16_t1": 2.603490977771705
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.0/conv1/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.0/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 25.3479286,
+        "fp16_1": 12.37751428888889,
+        "bnn_1": 3.8466282555555558
+      },
+      "speedups": {
+        "fp32_t1": 6.589648626271811,
+        "fp16_t1": 3.2177568162487398
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.0/conv2/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.0/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 29.786009666666665,
+        "fp16_1": 11.747036455555556,
+        "bnn_1": 4.322439966666667
+      },
+      "speedups": {
+        "fp32_t1": 6.8910175494320915,
+        "fp16_t1": 2.717686433159304
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.0/conv3/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.0/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.131308355555555,
+        "fp16_1": 4.767578,
+        "bnn_1": 1.6145592111111111
+      },
+      "speedups": {
+        "fp32_t1": 7.513696786138307,
+        "fp16_t1": 2.95286661968813
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.1/conv1/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.1/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 12.825090844444444,
+        "fp16_1": 6.1953356,
+        "bnn_1": 1.8672900777777777
+      },
+      "speedups": {
+        "fp32_t1": 6.868290576313303,
+        "fp16_t1": 3.317821732000492
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.1/conv2/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.1/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 9.826674766666667,
+        "fp16_1": 4.595586466666667,
+        "bnn_1": 4.036584677777777
+      },
+      "speedups": {
+        "fp32_t1": 2.4344032272540987,
+        "fp16_t1": 1.1384838504605908
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.1/conv3/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.1/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.765346533333334,
+        "fp16_1": 4.766897422222222,
+        "bnn_1": 1.6166943222222223
+      },
+      "speedups": {
+        "fp32_t1": 7.277409446927056,
+        "fp16_t1": 2.9485459042559743
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.2/conv1/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.2/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 12.537643088888888,
+        "fp16_1": 5.969065744444444,
+        "bnn_1": 1.8559542555555555
+      },
+      "speedups": {
+        "fp32_t1": 6.755362127789033,
+        "fp16_t1": 3.216170725424309
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.2/conv2/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.2/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 9.964160955555556,
+        "fp16_1": 4.545082322222222,
+        "bnn_1": 4.0388469888888885
+      },
+      "speedups": {
+        "fp32_t1": 2.4670805759583274,
+        "fp16_t1": 1.125341547903651
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.2/conv3/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.2/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.481881866666667,
+        "fp16_1": 4.815057122222222,
+        "bnn_1": 1.6170877444444445
+      },
+      "speedups": {
+        "fp32_t1": 7.100345609638705,
+        "fp16_t1": 2.9776102989862494
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.3/conv1/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.3/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 12.77361631111111,
+        "fp16_1": 6.220813677777778,
+        "bnn_1": 1.848824088888889
+      },
+      "speedups": {
+        "fp32_t1": 6.909049047920958,
+        "fp16_t1": 3.3647407101431583
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.3/conv2/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.3/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 9.809821033333334,
+        "fp16_1": 4.589182533333333,
+        "bnn_1": 4.035439466666666
+      },
+      "speedups": {
+        "fp32_t1": 2.4309176520584495,
+        "fp16_t1": 1.137220015624238
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer2/layer2.3/conv3/Conv",
+      "float_op": "/feature_extractor/layer2/layer2.3/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 11.816675766666666,
+        "fp16_1": 4.738346166666667,
+        "bnn_1": 1.624004611111111
+      },
+      "speedups": {
+        "fp32_t1": 7.276257521573129,
+        "fp16_t1": 2.9176925571810948
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.0/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.0/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 25.964370555555554,
+        "fp16_1": 10.331435022222221,
+        "bnn_1": 3.0943011222222223
+      },
+      "speedups": {
+        "fp32_t1": 8.391029033693018,
+        "fp16_t1": 3.338858958498045
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.0/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.0/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 28.757547855555554,
+        "fp16_1": 12.692677388888889,
+        "bnn_1": 4.149795133333333
+      },
+      "speedups": {
+        "fp32_t1": 6.929871700065344,
+        "fp16_t1": 3.058627469808001
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.0/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.0/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.626800677777778,
+        "fp16_1": 4.909912966666667,
+        "bnn_1": 1.3562531555555555
+      },
+      "speedups": {
+        "fp32_t1": 9.310061787546973,
+        "fp16_t1": 3.620203902608022
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.1/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.1/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.460664622222222,
+        "fp16_1": 5.534529766666667,
+        "bnn_1": 1.501414088888889
+      },
+      "speedups": {
+        "fp32_t1": 8.965324570907478,
+        "fp16_t1": 3.686211424033231
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.1/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.1/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.027420988888888,
+        "fp16_1": 4.668757222222222,
+        "bnn_1": 4.725014777777778
+      },
+      "speedups": {
+        "fp32_t1": 2.545477962408724,
+        "fp16_t1": 0.9880936762737461
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.1/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.1/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 13.161393644444445,
+        "fp16_1": 4.937673011111111,
+        "bnn_1": 1.3577007333333333
+      },
+      "speedups": {
+        "fp32_t1": 9.693884168517386,
+        "fp16_t1": 3.636790413295629
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.2/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.2/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.7194896,
+        "fp16_1": 5.551865677777778,
+        "bnn_1": 1.4917504
+      },
+      "speedups": {
+        "fp32_t1": 9.19690693563749,
+        "fp16_t1": 3.7217122098829525
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.2/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.2/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.077930422222222,
+        "fp16_1": 4.663954944444445,
+        "bnn_1": 4.731242566666666
+      },
+      "speedups": {
+        "fp32_t1": 2.552803043182706,
+        "fp16_t1": 0.9857780231569001
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.2/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.2/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 13.084667633333334,
+        "fp16_1": 4.9472685,
+        "bnn_1": 1.3560128777777778
+      },
+      "speedups": {
+        "fp32_t1": 9.64936826763502,
+        "fp16_t1": 3.648393448967491
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.3/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.3/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.539700266666667,
+        "fp16_1": 5.498789355555555,
+        "bnn_1": 1.4950886
+      },
+      "speedups": {
+        "fp32_t1": 9.056118992992566,
+        "fp16_t1": 3.6779020022997666
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.3/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.3/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.145381288888888,
+        "fp16_1": 4.665387,
+        "bnn_1": 4.727148133333333
+      },
+      "speedups": {
+        "fp32_t1": 2.5692829897261147,
+        "fp16_t1": 0.9869348005200372
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.3/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.3/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.612148777777778,
+        "fp16_1": 4.899853333333334,
+        "bnn_1": 1.3575312
+      },
+      "speedups": {
+        "fp32_t1": 9.290503804095094,
+        "fp16_t1": 3.6093854294717747
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.4/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.4/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.758453944444444,
+        "fp16_1": 5.563618211111111,
+        "bnn_1": 1.4991886888888888
+      },
+      "speedups": {
+        "fp32_t1": 9.177266375082784,
+        "fp16_t1": 3.7110860376318207
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.4/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.4/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.066393233333333,
+        "fp16_1": 4.6272898555555555,
+        "bnn_1": 4.721635833333333
+      },
+      "speedups": {
+        "fp32_t1": 2.5555535537383496,
+        "fp16_t1": 0.9800183705164801
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.4/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.4/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.975274677777778,
+        "fp16_1": 4.8580141333333335,
+        "bnn_1": 1.3494435555555555
+      },
+      "speedups": {
+        "fp32_t1": 9.615277811628037,
+        "fp16_t1": 3.6000128448005566
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.5/conv1/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.5/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.620296944444444,
+        "fp16_1": 5.458564211111111,
+        "bnn_1": 1.4916261222222222
+      },
+      "speedups": {
+        "fp32_t1": 9.13117351696211,
+        "fp16_t1": 3.6594721222627493
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.5/conv2/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.5/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 12.047126822222221,
+        "fp16_1": 4.6481998777777775,
+        "bnn_1": 4.726318066666667
+      },
+      "speedups": {
+        "fp32_t1": 2.5489454269248335,
+        "fp16_t1": 0.9834716606485218
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer3/layer3.5/conv3/Conv",
+      "float_op": "/feature_extractor/layer3/layer3.5/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 13.050077233333333,
+        "fp16_1": 4.9040565,
+        "bnn_1": 1.3522644444444445
+      },
+      "speedups": {
+        "fp32_t1": 9.650536392454466,
+        "fp16_t1": 3.626551389521116
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.0/conv1/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.0/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 25.610792055555557,
+        "fp16_1": 10.624031633333333,
+        "bnn_1": 2.625226111111111
+      },
+      "speedups": {
+        "fp32_t1": 9.755651883530879,
+        "fp16_t1": 4.046901555781333
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.0/conv2/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.0/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 29.674174266666668,
+        "fp16_1": 12.636788633333333,
+        "bnn_1": 4.924486066666667
+      },
+      "speedups": {
+        "fp32_t1": 6.025841857392605,
+        "fp16_t1": 2.5661131866877316
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.0/conv3/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.0/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 13.13883418888889,
+        "fp16_1": 5.643787644444444,
+        "bnn_1": 1.2761747333333333
+      },
+      "speedups": {
+        "fp32_t1": 10.295482151233802,
+        "fp16_t1": 4.422425469671403
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.1/conv1/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.1/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.582264633333333,
+        "fp16_1": 6.063484111111111,
+        "bnn_1": 1.302942511111111
+      },
+      "speedups": {
+        "fp32_t1": 10.42430077882007,
+        "fp16_t1": 4.653685070065256
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.1/conv2/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.1/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 14.203658277777778,
+        "fp16_1": 5.2588786333333335,
+        "bnn_1": 6.427817733333334
+      },
+      "speedups": {
+        "fp32_t1": 2.2097170248186324,
+        "fp16_t1": 0.8181437077877731
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.1/conv3/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.1/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.523846655555555,
+        "fp16_1": 5.588189722222222,
+        "bnn_1": 1.2696093555555557
+      },
+      "speedups": {
+        "fp32_t1": 9.864330788642755,
+        "fp16_t1": 4.401503263794825
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.2/conv1/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.2/conv1/Conv",
+      "means_ms": {
+        "fp32_1": 13.611701622222222,
+        "fp16_1": 6.043682555555556,
+        "bnn_1": 1.3081536
+      },
+      "speedups": {
+        "fp32_t1": 10.40527780699623,
+        "fp16_t1": 4.620009879234026
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.2/conv2/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.2/conv2/Conv",
+      "means_ms": {
+        "fp32_1": 14.182511844444445,
+        "fp16_1": 5.0941004,
+        "bnn_1": 6.4229208444444446
+      },
+      "speedups": {
+        "fp32_t1": 2.2081093925844844,
+        "fp16_t1": 0.7931127478250307
+      }
+    },
+    {
+      "module": 0,
+      "binary_op": "/feature_extractor/layer4/layer4.2/conv3/Conv",
+      "float_op": "/feature_extractor/layer4/layer4.2/conv3/Conv",
+      "means_ms": {
+        "fp32_1": 12.869585233333334,
+        "fp16_1": 5.5970096,
+        "bnn_1": 1.2810082333333332
+      },
+      "speedups": {
+        "fp32_t1": 10.04645005274101,
+        "fp16_t1": 4.369222191051752
+      }
+    },
+    {
+      "module": 1,
+      "binary_op": "/Conv",
+      "float_op": "/fc1/Gemm",
+      "means_ms": {
+        "fp32_1": 3.0041669222222223,
+        "fp16_1": 1.5173055555555555,
+        "bnn_1": 0.17219295555555555
+      },
+      "speedups": {
+        "fp32_t1": 17.44651465287714,
+        "fp16_t1": 8.811658703808117
+      }
+    },
+    {
+      "module": 1,
+      "binary_op": "/Conv_1",
+      "float_op": "/fc2/Gemm",
+      "means_ms": {
+        "fp32_1": 1.3204155888888889,
+        "fp16_1": 0.7078479777777777,
+        "bnn_1": 0.08414683333333334
+      },
+      "speedups": {
+        "fp32_t1": 15.691803679150796,
+        "fp16_t1": 8.412057230647749
+      }
+    },
+    {
+      "module": 2,
+      "binary_op": "/Conv",
+      "float_op": "/fc1/Gemm",
+      "means_ms": {
+        "fp32_1": 2.9655427666666667,
+        "fp16_1": 1.4823669777777777,
+        "bnn_1": 0.1585577
+      },
+      "speedups": {
+        "fp32_t1": 18.70324031356829,
+        "fp16_t1": 9.349069630663019
+      }
+    },
+    {
+      "module": 2,
+      "binary_op": "/Conv_1",
+      "float_op": "/fc2/Gemm",
+      "means_ms": {
+        "fp32_1": 1.3488269666666666,
+        "fp16_1": 0.7232782,
+        "bnn_1": 0.08239981111111111
+      },
+      "speedups": {
+        "fp32_t1": 16.36929682821549,
+        "fp16_t1": 8.777668179660067
+      }
+    },
+    {
+      "module": 3,
+      "binary_op": "/Conv",
+      "float_op": "/fc1/Gemm",
+      "means_ms": {
+        "fp32_1": 3.090685477777778,
+        "fp16_1": 1.4002927555555555,
+        "bnn_1": 0.15678935555555557
+      },
+      "speedups": {
+        "fp32_t1": 19.712342504543603,
+        "fp16_t1": 8.931044780392545
+      }
+    },
+    {
+      "module": 3,
+      "binary_op": "/Conv_1",
+      "float_op": "/fc2/Gemm",
+      "means_ms": {
+        "fp32_1": 1.3231117000000001,
+        "fp16_1": 0.6883613111111111,
+        "bnn_1": 0.08626662222222223
+      },
+      "speedups": {
+        "fp32_t1": 15.337469648361488,
+        "fp16_t1": 7.979462895138019
+      }
+    }
+  ]
+}

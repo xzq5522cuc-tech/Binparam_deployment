@@ -1,0 +1,279 @@
+diff --git a/book.json b/book.json
+deleted file mode 100644
+index baf158d..0000000
+--- a/book.json
++++ /dev/null
+@@ -1,22 +0,0 @@
+-{
+-    "plugins": [
+-        "github",
+-        "back-to-top-button",
+-        "page-toc-button",
+-        "insert-logo"
+-    ],
+-
+-    "pluginsConfig": {
+-        "github": {
+-            "url": "https://github.com/huawei-noah/bolt"
+-        },
+-        "page-toc-button": {
+-            "maxTocDepth": 1,
+-            "minTocSize": 2
+-        },
+-        "insert-logo":{
+-            "url":"../docs/images/LOGO.PNG",
+-            "style":"background:none;max-height:100px"
+-        }
+-    }
+-}
+diff --git a/compute/blas_enhance/src/cpu/arm/fp16/mvm_common.h b/compute/blas_enhance/src/cpu/arm/fp16/mvm_common.h
+index 4d9e16c..5e1132b 100644
+--- a/compute/blas_enhance/src/cpu/arm/fp16/mvm_common.h
++++ b/compute/blas_enhance/src/cpu/arm/fp16/mvm_common.h
+@@ -121,9 +121,9 @@ inline void mvm_col_kernel_4x8(U32 N, U32 K, F16 *matrix, F16 *vector, F16 *resu
+                  "add x27, x26, %6\n"
+                  "mov x2, x21\n"
+ 
+-                 "00:\n"
++                 "90:\n"
+                  "cmp x20, x2\n"
+-                 "bge 01f\n"
++                 "bge 91f\n"
+                  "ldr h0, [x20], 2\n"
+                  "dup v0.8h, v0.h[0]\n"
+                  "ldr h1, [x21], 2\n"
+@@ -166,8 +166,8 @@ inline void mvm_col_kernel_4x8(U32 N, U32 K, F16 *matrix, F16 *vector, F16 *resu
+                  "b 11b\n"
+ 
+                  "12:\n"
+-                 "b 00b\n"
+-                 "01:\n"
++                 "b 90b\n"
++                 "91:\n"
+                  : "+r"(vector), "+r"(matrix), "+r"(result), "+r"(result_end8), "+r"(result_end)
+                  : "r"((I64)K * 2), "r"((I64)K * N * 2)
+                  : "memory", "cc", "x20", "x21", "x22", "x23", "x24", "x25", "x26", "x27", "x28",
+diff --git a/compute/tensor/src/cpu/arm/bnn/convolution.cpp b/compute/tensor/src/cpu/arm/bnn/convolution.cpp
+index 3668798..6df2c3d 100644
+--- a/compute/tensor/src/cpu/arm/bnn/convolution.cpp
++++ b/compute/tensor/src/cpu/arm/bnn/convolution.cpp
+@@ -48,20 +48,40 @@ EE convolution_bnn(TensorDesc inputDesc,
+     if (odt != DT_F16) {
+         CHECK_STATUS(NOT_MATCH);
+     }
+-    if (idf != DF_NCHWC8 || odf != DF_NCHWC8) {
++    if (odf != DF_NCHWC8) {
+         CHECK_STATUS(NOT_MATCH);
+     }
+ 
++    // ONNX vectors reshaped to [N, C, 1, W] are marked NCHW by Bolt even
++    // when C is divisible by 8.  The BNN kernel itself consumes NCHWC8, so
++    // pack such inputs into the temporary workspace exactly as the INT8 ARM
++    // convolution path does.  Existing NCHWC8 backbone convolutions keep the
++    // original zero-copy path.
++    const F16 *inputPtr = input;
++    U8 *tmpPtr = (U8 *)tmp;
++    if (idf != DF_NCHWC8) {
++        TensorDesc previousDesc = inputDesc;
++        inputDesc.df = DF_NCHWC8;
++        U32 packedBytes = tensorNumBytes(inputDesc);
++        if (tmpBytes < packedBytes) {
++            CHECK_STATUS(NOT_MATCH);
++        }
++        CHECK_STATUS(transformNCHWToNCHWC8(previousDesc, input, inputDesc, tmpPtr));
++        inputPtr = (const F16 *)tmpPtr;
++        tmpPtr += packedBytes;
++        tmpBytes -= packedBytes;
++    }
++
+     EE ret = SUCCESS;
+     switch (fdt) {
+         case DT_BIN01:
+-            ret = convolution_dorefa(inputDesc, (F16 *)input, filterDesc, (BIN8 *)filter,
+-                convParamSpec, scaleDesc, (F16 *)scale, biasDesc, (F16 *)bias, tmpBytes, tmp,
++            ret = convolution_dorefa(inputDesc, (F16 *)inputPtr, filterDesc, (BIN8 *)filter,
++                convParamSpec, scaleDesc, (F16 *)scale, biasDesc, (F16 *)bias, tmpBytes, tmpPtr,
+                 outputDesc, (F16 *)output, activationDesc, arch);
+             break;
+         case DT_BIN11:
+-            ret = convolution_xnor(inputDesc, (F16 *)input, filterDesc, (BIN8 *)filter,
+-                convParamSpec, scaleDesc, (F16 *)scale, biasDesc, (F16 *)bias, tmpBytes, tmp,
++            ret = convolution_xnor(inputDesc, (F16 *)inputPtr, filterDesc, (BIN8 *)filter,
++                convParamSpec, scaleDesc, (F16 *)scale, biasDesc, (F16 *)bias, tmpBytes, tmpPtr,
+                 outputDesc, (F16 *)output, activationDesc, arch);
+             break;
+         default:
+diff --git a/compute/tensor/src/cpu/arm/convolution.cpp b/compute/tensor/src/cpu/arm/convolution.cpp
+index 5875502..1fb8f5f 100644
+--- a/compute/tensor/src/cpu/arm/convolution.cpp
++++ b/compute/tensor/src/cpu/arm/convolution.cpp
+@@ -398,6 +398,14 @@ EE convolution_infer_forward_tmp_bytes_arm(TensorDesc inputDesc,
+     if (DT_I8 == fdt && DF_NCHWC8 != idf) {
+         *bytes += tensorNumBytes(inputDesc);
+     }
++    // convolution_bnn packs an ordinary NCHW input into NCHWC8 before
++    // entering the ARM 1-bit kernel.  Keep that packed copy separate from
++    // the kernel's original temporary workspace; otherwise the pack step
++    // consumes bytes that convolution_xnor/dorefa still needs and inference
++    // returns NOT_MATCH even though X2bolt accepted and packed the weights.
++    if ((DT_BIN01 == fdt || DT_BIN11 == fdt) && DF_NCHWC8 != idf) {
++        *bytes += tensorNumBytes(inputDesc);
++    }
+     *bytes += 32;
+ 
+     // pre data processing space for not complete NCHWC8 group convolution input
+diff --git a/model_tools/src/caffe/caffe_adaptee.h b/model_tools/src/caffe/caffe_adaptee.h
+index 308521d..3f69686 100644
+--- a/model_tools/src/caffe/caffe_adaptee.h
++++ b/model_tools/src/caffe/caffe_adaptee.h
+@@ -57,7 +57,7 @@ protected:
+         google::protobuf::io::IstreamInputStream input(&fs);
+         google::protobuf::io::CodedInputStream codedstr(&input);
+ 
+-        codedstr.SetTotalBytesLimit(INT_MAX, INT_MAX / 2);
++        codedstr.SetTotalBytesLimit(INT_MAX);
+ 
+         bool ret = message->ParseFromCodedStream(&codedstr);
+         fs.close();
+diff --git a/model_tools/src/mindspore/mindspore_adaptee.h b/model_tools/src/mindspore/mindspore_adaptee.h
+index 8711f09..7904cdb 100644
+--- a/model_tools/src/mindspore/mindspore_adaptee.h
++++ b/model_tools/src/mindspore/mindspore_adaptee.h
+@@ -61,7 +61,7 @@ protected:
+         google::protobuf::io::IstreamInputStream input(&fs);
+         google::protobuf::io::CodedInputStream codedstr(&input);
+ 
+-        codedstr.SetTotalBytesLimit(INT_MAX, INT_MAX / 2);
++        codedstr.SetTotalBytesLimit(INT_MAX);
+ 
+         bool ret = message->ParseFromCodedStream(&codedstr);
+         fs.close();
+diff --git a/model_tools/src/onnx/onnx_adaptee.h b/model_tools/src/onnx/onnx_adaptee.h
+index d81e02d..849c0e2 100644
+--- a/model_tools/src/onnx/onnx_adaptee.h
++++ b/model_tools/src/onnx/onnx_adaptee.h
+@@ -47,7 +47,7 @@ protected:
+ 
+         google::protobuf::io::IstreamInputStream input(&fs);
+         google::protobuf::io::CodedInputStream codedstr(&input);
+-        codedstr.SetTotalBytesLimit(INT_MAX, INT_MAX / 2);
++        codedstr.SetTotalBytesLimit(INT_MAX);
+         if (!message->ParseFromCodedStream(&codedstr)) {
+             UNI_ERROR_LOG("can not parse onnx model file %s.\n", modelPath);
+         }
+@@ -893,6 +893,7 @@ protected:
+ 
+     EE adapt_weights(ModelSpec *ms) override
+     {
++    UNI_INFO_LOG("adapt_weights for model: %s\n", this->modelName.c_str());
+         std::vector<WeightSpec> ws;
+         for (auto iter = this->sharedWeights.begin(); iter != this->sharedWeights.end(); iter++) {
+             ws.push_back(convert_weight(crop_name("weight_" + *iter), {onnxWeights[*iter]}, {}));
+@@ -905,7 +906,7 @@ protected:
+                 "process operator name:%s type:%s weight.\n", opName.c_str(), onnxNodeType.c_str());
+             opName = crop_name(opName);
+             auto indices = get_weight_ids(this->onnxNode);
+-
++            
+             WeightSpec weightSpec;
+             if (onnxNodeType == "Conv" || onnxNodeType == "ConvTranspose") {
+                 weightSpec = convert_weight(opName, {onnxWeights[this->onnxNode.input(1)]}, {});
+diff --git a/model_tools/tools/X2bolt/X2bolt.cpp b/model_tools/tools/X2bolt/X2bolt.cpp
+index 13557e7..0cbb5ff 100644
+--- a/model_tools/tools/X2bolt/X2bolt.cpp
++++ b/model_tools/tools/X2bolt/X2bolt.cpp
+@@ -151,6 +151,81 @@ int main(int argc, char *argv[])
+     // modified input names and output names
+     modify_ms_inputs_and_outputs(ms, modifiedInputs, modifiedOutputs);
+ 
++
++    {
++        size_t bin_bytes = 0, f16_bytes = 0, f32_bytes = 0, other_bytes = 0;
++        int bin_count = 0, f16_count = 0, f32_count = 0, other_count = 0;
++
++        for (U32 i = 0; i < ms->num_weight_specs; i++) {
++            const auto &w = ms->ws[i];
++            switch (w.mdt) {
++                case DT_BIN01:
++                case DT_BIN11:
++                    bin_bytes += w.bytes_of_weight;
++                    bin_count++;
++                    break;
++                case DT_F16:
++                    f16_bytes += w.bytes_of_weight;
++                    f16_count++;
++                    break;
++                case DT_F32:
++                    f32_bytes += w.bytes_of_weight;
++                    f32_count++;
++                    break;
++                default:
++                    other_bytes += w.bytes_of_weight;
++                    other_count++;
++                    break;
++            }
++        }
++
++        printf("\n=== WEIGHT STORAGE SUMMARY ===\n");
++        printf("BIN  : %d tensors, %.3f MiB\n", bin_count, bin_bytes / 1024.0 / 1024.0);
++        printf("F16  : %d tensors, %.3f MiB\n", f16_count, f16_bytes / 1024.0 / 1024.0);
++        printf("F32  : %d tensors, %.3f MiB\n", f32_count, f32_bytes / 1024.0 / 1024.0);
++        printf("OTHER: %d tensors, %.3f MiB\n", other_count, other_bytes / 1024.0 / 1024.0);
++
++        size_t total = bin_bytes + f16_bytes + f32_bytes + other_bytes;
++        printf("TOTAL WEIGHTS: %.3f MiB\n", total / 1024.0 / 1024.0);
++        printf("==============================\n\n");
++    }
++
++
++    {
++        size_t target_bytes = 0;
++        int target_count = 0;
++
++        for (U32 i = 0; i < ms->num_weight_specs; i++) {
++            const auto &w = ms->ws[i];
++            std::string name = w.op_name;
++
++            bool in_layer =
++                name.find("/feature_extractor/layer1/") != std::string::npos ||
++                name.find("/feature_extractor/layer2/") != std::string::npos ||
++                name.find("/feature_extractor/layer3/") != std::string::npos ||
++                name.find("/feature_extractor/layer4/") != std::string::npos;
++
++            bool is_main_conv =
++                name.find("/conv1/Conv") != std::string::npos ||
++                name.find("/conv2/Conv") != std::string::npos ||
++                name.find("/conv3/Conv") != std::string::npos;
++
++            bool is_downsample =
++                name.find("/downsample/") != std::string::npos;
++
++            if (in_layer && is_main_conv && !is_downsample) {
++                target_bytes += w.bytes_of_weight;
++                target_count++;
++            }
++        }
++
++        printf("\n=== TARGET 48 CONV STORAGE ===\n");
++        printf("count = %d\n", target_count);
++        printf("size  = %.3f MiB\n",
++            target_bytes / 1024.0 / 1024.0);
++        printf("================================\n\n");
++    }
++
+     UNI_INFO_LOG("Write bolt model to %s.\n", modelStorePath.c_str());
+     CHECK_STATUS(serialize_model_to_file(ms, modelStorePath.c_str()));
+     OnlineModelReclaim(onlineModel);
+diff --git a/third_party/install.sh b/third_party/install.sh
+index 799c0e6..e569f43 100755
+--- a/third_party/install.sh
++++ b/third_party/install.sh
+@@ -94,7 +94,7 @@ cmake_env_options=\"\"
+ CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_LIBDIR=lib"
+ if [[ ${cmake_options} =~ USE_CAFFE=ON || ${cmake_options} =~ USE_ONNX=ON || ${cmake_options} =~ USE_FLOW=ON ]]; then
+     PROTOC_ROOT=${work_dir}/protoc
+-    protobuf_version="3.14.0"
++    protobuf_version="3.20.3"
+     if [[ ${host} != ${target} && ${target} =~ linux-aarch64 ]]; then
+         protobuf_version="3.1.0"
+     fi

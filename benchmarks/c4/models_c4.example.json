@@ -1,0 +1,20 @@
+{
+  "fp32": {
+    "feature": "/home/odroid/pymaf_final/final_release/models/fp32/feature.bolt",
+    "stage0": "/home/odroid/pymaf_final/final_release/models/fp32/stage0.bolt",
+    "stage1": "/home/odroid/pymaf_final/final_release/models/fp32/stage1.bolt",
+    "stage2": "/home/odroid/pymaf_final/final_release/models/fp32/stage2.bolt"
+  },
+  "fp16": {
+    "feature": "/home/odroid/pymaf_final/models/fp16/feature_f16.bolt",
+    "stage0": "/home/odroid/pymaf_final/models/fp16/stage0_f16.bolt",
+    "stage1": "/home/odroid/pymaf_final/models/fp16/stage1_f16.bolt",
+    "stage2": "/home/odroid/pymaf_final/models/fp16/stage2_f16.bolt"
+  },
+  "bnn": {
+    "feature": "/home/odroid/pymaf_final/final_release/versions/c4_20261020_biasfix/models/bnn/feature.bolt",
+    "stage0": "/home/odroid/pymaf_final/final_release/versions/c4_20261020_biasfix/models/bnn/stage0.bolt",
+    "stage1": "/home/odroid/pymaf_final/final_release/versions/c4_20261020_biasfix/models/bnn/stage1.bolt",
+    "stage2": "/home/odroid/pymaf_final/final_release/versions/c4_20261020_biasfix/models/bnn/stage2.bolt"
+  }
+}
