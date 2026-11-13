@@ -3,6 +3,8 @@
 - [模型部署教程](docs/DEPLOYMENT.md)覆盖 PyTorch、ONNX、Bolt、ODROID-C4 和 Raspberry Pi 5。
 - [板端验证指南](docs/TESTING.md)包含精度一致性、推理后端耗时和算子耗时。
 
+ODROID-C4 的摄像头运行代码、桌面启动脚本和板端说明见 [C4 交接目录](boards/odroid-c4/README.md)。
+
 ## Pi 5 日常使用
 
 插好 USB 摄像头和 HDMI 显示器。登录 Pi 5 的 cuc 图形桌面后，摄像头程序会自动启动。关闭后可以双击桌面的「BinParam 3D Camera」重新打开。如果桌面首次询问是否允许启动该图标，选择允许。

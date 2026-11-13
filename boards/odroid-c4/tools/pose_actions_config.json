@@ -1,0 +1,11 @@
+{
+  "confirm_predictions": 3,
+  "arm_raise_deg": 55.0,
+  "arm_rest_deg": 40.0,
+  "raised_wrist_min_torso": -0.4,
+  "rest_wrist_max_torso": -0.3,
+  "standing_knee_min_deg": 135.0,
+  "standing_extension_min": 0.85,
+  "squat_knee_max_deg": 135.0,
+  "squat_extension_max": 0.82
+}
