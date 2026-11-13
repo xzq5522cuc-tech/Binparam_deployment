@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import cv2
 import numpy as np
-from camera_auto_fast import faces_from_smpl
+from camera import faces_from_smpl
 
 p=argparse.ArgumentParser()
 p.add_argument('--snapshot',required=True,type=Path)

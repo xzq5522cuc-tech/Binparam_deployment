@@ -11,7 +11,7 @@ import time
 
 import cv2
 import numpy as np
-from person_detector import PersonDetector
+from detector import PersonDetector
 from pose_actions import ArmRaiseRecognizer
 
 TIMING_NAMES = ['inference_ms', 'feature_ms', 'stage0_ms', 'stage1_ms',
